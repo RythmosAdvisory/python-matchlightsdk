@@ -75,8 +75,8 @@ def test_record_user_provided_id(document):
 
 
 def test_record_add_pii_missing_last_name_error(connection, project):
-     """Test that add_pii throws an error for missing last_name argument."""
-     missing_last_name_record_data = {
+    """Test that add_pii throws an error for missing last_name argument."""
+    missing_last_name_record_data = {
         'email': 'heather03@hotmail.com',
         'first_name': 'Elby',
         'middle_name': '',
