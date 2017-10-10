@@ -73,7 +73,12 @@ def test_record_user_provided_id(document):
     record = matchlight.Record(**document)
     assert record.user_provided_id == document['metadata']['user_record_id']
 
+
 def test_record_add_pii_missing_last_name_error(connection, project):
+    """Verifies that add_pii() throws an error if a `first_name` argument is
+    provided without an accompanying `last_name` argument.
+
+    """
     missing_last_name_record_data = {
         'email': 'heather03@hotmail.com',
         'first_name': 'Elby',
@@ -97,6 +102,7 @@ def test_record_add_pii_missing_last_name_error(connection, project):
         'Fingerprinter Failed: the last_name argument is required along with '
         'the first_name argument.'
     )
+
 
 @pytest.mark.httpretty
 @pytest.mark.parametrize('min_score', [
