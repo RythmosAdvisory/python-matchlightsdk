@@ -91,7 +91,7 @@ def test_record_add_pii_missing_first_name_error(connection, project):
         connection.records.add_pii(
             project=project,
             description='',
-            **missing_last_name_record_data
+            **missing_first_name_record_data
         )
 
     assert str(err_info.value) == (
