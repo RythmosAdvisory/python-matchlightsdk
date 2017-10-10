@@ -78,7 +78,7 @@ def test_record_add_pii_missing_first_name_error(connection, project):
     missing_first_name_record_data = {
         'email': 'heather03@hotmail.com',
         'middle_name': '',
-        'last_name', 'whatever',
+        'last_name': 'whatever',
         'ssn': '000-00-0000',
         'address': '25068 Treena Cliff',
         'city': 'Almediashire',
