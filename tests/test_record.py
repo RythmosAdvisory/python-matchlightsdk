@@ -73,6 +73,7 @@ def test_record_user_provided_id(document):
     record = matchlight.Record(**document)
     assert record.user_provided_id == document['metadata']['user_record_id']
 
+
 def test_record_add_pii_missing_first_name_error(connection, project):
     """Test that add_pii throws an error for missing first_name argument."""
     missing_first_name_record_data = {
@@ -98,6 +99,7 @@ def test_record_add_pii_missing_first_name_error(connection, project):
         'Fingerprinter Failed: the first_name argument is required along with '
         'the last_name argument.'
     )
+
 
 def test_record_add_pii_missing_last_name_error(connection, project):
     """Test that add_pii throws an error for missing last_name argument."""
