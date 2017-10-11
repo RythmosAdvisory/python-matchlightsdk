@@ -194,6 +194,18 @@ class RecordMethods(object):
             :class:`~.Record`: Created record with metadata.
 
         """
+        if first_name is not None and last_name is None:
+            raise matchlight.error.SDKError(
+                'Fingerprinter Failed: the last_name argument is required '
+                'along with the first_name argument.'
+            )
+
+        if first_name is None and last_name is not None:
+            raise matchlight.error.SDKError(
+                'Fingerprinter Failed: the first_name argument is required '
+                'along with the last_name argument.'
+            )
+
         data = {
             'desc': description,
             'user_record_id': user_record_id,
