@@ -168,7 +168,7 @@ class ProjectMethods(collections_abc.Iterable):
         """
         data = json.dumps({'name': name, 'type': project_type})
         r = self.conn.request('/project/add', data=data)
-        return self.get(r.json()['data'].get('upload_token'))
+        return Project.from_mapping(r.json()['data'])
 
     def delete(self, project):
         """Deletes a project and all associated records.

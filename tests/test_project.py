@@ -25,14 +25,7 @@ def test_project_add(connection, project_name, project_payload,
     httpretty.register_uri(
         httpretty.POST, '{}/project/add'.format(
             matchlight.MATCHLIGHT_API_URL_V2),
-        body=json.dumps({'data': {'upload_token': upload_token}}),
-        content_type='application/json', status=200)
-    httpretty.register_uri(
-        httpretty.GET, '{}/project/{}'.format(
-            matchlight.MATCHLIGHT_API_URL_V2,
-            upload_token,
-        ),
-        body=json.dumps(project_payload),
+        body=json.dumps({'data': project_payload}),
         content_type='application/json', status=200)
     project = connection.projects.add(project_name, project_type)
     assert project.upload_token == upload_token
