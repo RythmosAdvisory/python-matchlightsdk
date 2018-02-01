@@ -104,7 +104,8 @@ class Connection(object):
 
         method = 'GET' if data is None else 'POST'
         if 'timeout' not in kwargs:
-            kwargs['timeout'] = 5.0
+            # API timeout is 90s
+            kwargs['timeout'] = 91.0
 
         response = self._request(
             method,

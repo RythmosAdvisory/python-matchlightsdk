@@ -89,7 +89,7 @@ class SearchMethods(object):
             '/detailed_search',
             data=json.dumps(data),
             endpoint=self.conn.search_endpoint,
-            timeout=90.0)
+        )
         try:
             results = response.json()['results']
         except KeyError:
