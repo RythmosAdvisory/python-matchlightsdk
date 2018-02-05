@@ -12,8 +12,6 @@ class LibfpException(Exception):
 def get_library_path(library_filename):
     return pkg_resources.resource_filename('pylibfp', path.join('lib', library_filename))
 
-_ISTESTING = "PYLIBFP_TESTING" in os.environ
-
 _ISPY2 = sys.version_info[0] == 2
 _ISPY3 = sys.version_info[0] == 3
 
@@ -26,7 +24,7 @@ if _PLAT.upper().startswith("WINDOWS"):
 elif platform.system().upper() == "DARWIN":
     _libfp = cdll.LoadLibrary(get_library_path("libfpd64.so"))
 else:
-    _libfp = cdll.LoadLibrary(get_library_path("libfpl64.so" if not _ISTESTING else "libfpl64_gcov.so"))
+    _libfp = cdll.LoadLibrary(get_library_path("libfpl64.so"))
 
 
 class ResultStruct(Structure):
