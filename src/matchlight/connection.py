@@ -111,7 +111,10 @@ class Connection(object):
             method,
             url,
             data=data,
-            headers={'Content-Type': 'application/json'},
+            headers={
+                'Content-Type': 'application/json',
+                'Matchlight-Request-Source': 'python-sdk',
+            },
             auth=(self.access_key, self.secret_key),
             proxies=self.proxy,
             verify=not self.insecure,
