@@ -1,4 +1,4 @@
-PYENVS=2.7.11 3.3.6 3.4.3 3.5.0
+PYENVS=2.7.15 3.4.8 3.5.5 3.6.5
 REQUIREMENTS_DIR=requirements
 
 .PHONY: clean clean_wheels
