@@ -21,7 +21,7 @@ def blind_name(name, width=5):
 def blind_email(email):
     """Censors an email address."""
     if not email:
-        return '****'
+        return '*****'
     if '@' in email:
         prefix, suffix = email.split('@', 1)
         suffix = '@' + suffix
