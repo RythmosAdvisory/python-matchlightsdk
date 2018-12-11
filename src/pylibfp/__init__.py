@@ -37,6 +37,15 @@ _libfp.fingerprint.restype = POINTER(ResultStruct)
 _libfp.fingerprint_chunk.argtypes = [POINTER(c_char), c_int]
 _libfp.fingerprint_chunk.restype = c_char_p
 
+_libfp.fingerprint_email_terbiumtwox.argtypes = [POINTER(c_char)]
+_libfp.fingerprint_email_terbiumtwox.restype = c_char_p
+
+_libfp.fingerprint_email_fromsha1.argtypes = [POINTER(c_char)]
+_libfp.fingerprint_email_fromsha1.restype = c_char_p
+
+_libfp.fingerprint_email_sha1.argtypes = [POINTER(c_char)]
+_libfp.fingerprint_email_sha1.restype = c_char_p
+
 _libfp.clean_string.argtypes = [POINTER(c_char), c_int]
 _libfp.clean_string.restype = c_char_p
 
@@ -126,6 +135,21 @@ def fingerprint(content, mode=MODE_TEXT, boolean=False, raw=False, flags=0):
 
 def fingerprint_chunk(content, flags=0):
     result = _libfp.fingerprint_chunk(create_string_buffer(_ensure_bytes(content)), flags)
+    return _ensure_unicode(result)
+
+
+def fingerprint_email_terbiumtwox(content):
+    result = _libfp.fingerprint_email_terbiumtwox(create_string_buffer(_ensure_bytes(content)))
+    return _ensure_unicode(result)
+
+
+def fingerprint_email_fromsha1(content):
+    result = _libfp.fingerprint_email_fromsha1(create_string_buffer(_ensure_bytes(content)))
+    return _ensure_unicode(result)
+
+
+def fingerprint_email_sha1(content):
+    result = _libfp.fingerprint_email_sha1(create_string_buffer(_ensure_bytes(content)))
     return _ensure_unicode(result)
 
 
