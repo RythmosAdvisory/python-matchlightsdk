@@ -154,6 +154,18 @@ def test_record_add_document(min_score, connection, project, document):
         document_path=DOCUMENT_RECORD_PATH,
         min_score=min_score)
 
+    httpretty.reset()
+
+    record = connection.records.add_document(
+        project=project,
+        name=document['name'],
+        description=document['description'],
+        document_path=DOCUMENT_RECORD_PATH,
+        min_score=min_score,
+        offline=True)
+    assert isinstance(record, dict)
+    assert not httpretty.has_request()
+
 
 @pytest.mark.httpretty
 def test_record_add_pii(connection, project, pii_records_raw):

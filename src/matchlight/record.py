@@ -135,7 +135,7 @@ class RecordMethods(object):
         return self.filter()
 
     def add_document(self, project, name, description, document_path,
-                     min_score=None):
+                     min_score=None, offline=False):
         """Creates a new document record in the given project."""
         with io.open(document_path, 'rb') as document:
             content = document.read()
@@ -150,13 +150,16 @@ class RecordMethods(object):
         }
         if min_score is not None:
             data['metadata'] = {'min_score': str(min_score)}
-        response = self.conn.request(
-            '/records/upload/document/{upload_token}'.format(
-                upload_token=project.upload_token
-            ),
-            data=json.dumps(data)
-        )
-        return Record.from_mapping(response.json())
+        if offline:
+            return data
+        else:
+            response = self.conn.request(
+                '/records/upload/document/{upload_token}'.format(
+                    upload_token=project.upload_token
+                ),
+                data=json.dumps(data)
+            )
+            return Record.from_mapping(response.json())
 
     def add_pii(self, project, description, email, first_name=None,
                 middle_name=None, last_name=None, ssn=None, address=None,
