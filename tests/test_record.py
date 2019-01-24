@@ -147,13 +147,13 @@ def test_record_add_document(min_score, connection, project, document):
             'metadata': '{}',
         }),
         content_type='application/json', status=200)
-    connection.records.add_document(
+    record = connection.records.add_document(
         project=project,
         name=document['name'],
         description=document['description'],
         document_path=DOCUMENT_RECORD_PATH,
+        user_record_id='12345',
         min_score=min_score)
-
     httpretty.reset()
 
     record = connection.records.add_document(
@@ -161,6 +161,7 @@ def test_record_add_document(min_score, connection, project, document):
         name=document['name'],
         description=document['description'],
         document_path=DOCUMENT_RECORD_PATH,
+        user_record_id=12345,
         min_score=min_score,
         offline=True)
     assert isinstance(record, dict)

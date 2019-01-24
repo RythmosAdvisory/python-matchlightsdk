@@ -135,7 +135,7 @@ class RecordMethods(object):
         return self.filter()
 
     def add_document(self, project, name, description, document_path,
-                     min_score=None, offline=False):
+                     user_record_id='-', min_score=None, offline=False):
         """Creates a new document record in the given project."""
         with io.open(document_path, 'rb') as document:
             content = document.read()
@@ -146,6 +146,7 @@ class RecordMethods(object):
         data = {
             'name': name,
             'desc': description,
+            'user_record_id': user_record_id,
             'fingerprints': fingerprints,
         }
         if min_score is not None:
