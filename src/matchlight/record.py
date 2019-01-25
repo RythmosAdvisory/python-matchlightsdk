@@ -13,6 +13,7 @@ from pylibfp import (
     fingerprint,
     fingerprints_pii_address_variants,
     fingerprints_pii_city_state_zip_variants,
+    fingerprints_pii_credit_card,
     fingerprints_pii_email_address,
     fingerprints_pii_name_variants,
     fingerprints_pii_phone_number,
@@ -161,7 +162,7 @@ class RecordMethods(object):
     def add_pii(self, project, description, email, first_name=None,
                 middle_name=None, last_name=None, ssn=None, address=None,
                 city=None, state=None, zipcode=None, phone=None,
-                user_record_id='-', offline=False):
+                credit_card=None, user_record_id='-', offline=False):
         """Creates a new PII record in the given project.
 
         Args:
@@ -182,6 +183,7 @@ class RecordMethods(object):
             state (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             zipcode (int, optional): Defaults to :obj:`NoneType`.
             phone (:obj:`str`, optional): Defaults to :obj:`NoneType`.
+            credit_card (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             user_record_id (:obj:`str`, optional): An optional, user
                 provided custom record identifier. Defaults to
                 :obj:`NoneType`.
@@ -244,6 +246,10 @@ class RecordMethods(object):
         if phone is not None:
             phone_fingerprints = fingerprints_pii_phone_number(phone)
             data['phone_fingerprints'] = [phone_fingerprints]
+
+        if credit_card is not None:
+            credit_card_fingerprints = fingerprints_pii_credit_card(credit_card)
+            data['credit_card_fingerprints'] = [credit_card_fingerprints]
 
         if offline:
             return data
