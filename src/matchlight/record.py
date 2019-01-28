@@ -134,11 +134,9 @@ class RecordMethods(object):
         """Returns all records associated with the account."""
         return self.filter()
 
-    def add_document(self, project, name, description, document_path,
+    def add_document(self, project, name, description, content,
                      user_record_id='-', min_score=None, offline=False):
         """Creates a new document record in the given project."""
-        with io.open(document_path, 'rb') as document:
-            content = document.read()
         result_json = fingerprint(content, flags=OPTIONS_TILED)
         result = json.loads(result_json)
         fingerprints = result['data']['fingerprints']

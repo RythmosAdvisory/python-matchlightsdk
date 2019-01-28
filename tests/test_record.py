@@ -135,6 +135,9 @@ def test_record_add_pii_missing_last_name_error(connection, project):
 ])
 def test_record_add_document(min_score, connection, project, document):
     """Verifies adding document records to a project."""
+    with io.open(DOCUMENT_RECORD_PATH, 'rb') as f:
+        content = f.readline()[0:840]
+
     httpretty.register_uri(
         httpretty.POST, '{}/records/upload/document/{}'.format(
             matchlight.MATCHLIGHT_API_URL_V2, project.upload_token),
@@ -151,7 +154,7 @@ def test_record_add_document(min_score, connection, project, document):
         project=project,
         name=document['name'],
         description=document['description'],
-        document_path=DOCUMENT_RECORD_PATH,
+        content=content,
         user_record_id='12345',
         min_score=min_score)
     httpretty.reset()
@@ -160,7 +163,7 @@ def test_record_add_document(min_score, connection, project, document):
         project=project,
         name=document['name'],
         description=document['description'],
-        document_path=DOCUMENT_RECORD_PATH,
+        content=content,
         user_record_id=12345,
         min_score=min_score,
         offline=True)
