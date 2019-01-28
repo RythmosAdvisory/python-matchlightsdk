@@ -5,6 +5,8 @@
 #    pip-compile --output-file requirements/dev.txt requirements/src/dev.in
 #
 backports.csv==1.0.5
+certifi==2018.11.29       # via requests
+chardet==3.0.4            # via requests
 click==6.7                # via pip-tools
 coverage==4.4.1           # via pytest-cov
 first==2.0.1              # via pip-tools
@@ -14,6 +16,7 @@ flake8-polyfill==1.0.1    # via flake8-docstrings
 flake8-quotes==0.11.0
 flake8==3.3.0
 httpretty==0.8.14         # via pytest-httpretty
+idna==2.8                 # via requests
 mccabe==0.6.1             # via flake8
 mock==2.0.0
 pbr==3.0.1                # via mock
@@ -30,4 +33,5 @@ requests==2.21.0
 six==1.10.0
 snowballstemmer==1.2.1    # via pydocstyle
 tox==2.7.0
+urllib3==1.24.1           # via requests
 virtualenv==15.1.0        # via tox
