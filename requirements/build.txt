@@ -5,5 +5,5 @@
 #    pip-compile --output-file requirements/build.txt requirements/src/build.in
 #
 backports.csv==1.0.5
-requests==2.11.1
+requests==2.21.0
 six==1.10.0
