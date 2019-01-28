@@ -148,9 +148,13 @@ class RecordMethods(object):
             'desc': description,
             'user_record_id': user_record_id,
             'fingerprints': fingerprints,
+            'metadata': {
+                'fingerprinting_tool_name': 'Python SDK',
+                'fingerprinting_tool_version': matchlight.__version__
+            }
         }
         if min_score is not None:
-            data['metadata'] = {'min_score': str(min_score)}
+            data['metadata']['min_score'] = str(min_score)
         if offline:
             return data
         else:
@@ -216,6 +220,10 @@ class RecordMethods(object):
             'blinded_first': matchlight.utils.blind_name(first_name),
             'blinded_last': matchlight.utils.blind_name(last_name),
             'blinded_email': matchlight.utils.blind_email(email),
+            'metadata': {
+                'fingerprinting_tool_name': 'Python SDK',
+                'fingerprinting_tool_version': matchlight.__version__
+            }
         }
 
         if any((first_name, middle_name, last_name)):
@@ -270,10 +278,14 @@ class RecordMethods(object):
             'name': name,
             'desc': description,
             'fingerprints': fingerprints,
+            'metadata': {
+                'fingerprinting_tool_name': 'Python SDK',
+                'fingerprinting_tool_version': matchlight.__version__
+            }
         }
 
         if min_score is not None:
-            data['metadata'] = {'min_score': str(min_score)}
+            data['metadata']['min_score'] = str(min_score)
         response = self.conn.request('/records/upload/source_code/{}'.format(
             project.upload_token), data=data)
         return Record.from_mapping(response.json())
