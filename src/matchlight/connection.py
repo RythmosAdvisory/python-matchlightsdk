@@ -114,6 +114,7 @@ class Connection(object):
             headers={
                 'Content-Type': 'application/json',
                 'Matchlight-Request-Source': 'python-sdk',
+                'Matchlight-Request-Source-Version': matchlight.__version__,
             },
             auth=(self.access_key, self.secret_key),
             proxies=self.proxy,
