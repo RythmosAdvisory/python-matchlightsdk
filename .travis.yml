@@ -8,13 +8,15 @@ after_success:
 
 matrix:
   include:
-    - python: 2.7
+    - python: 2.7.15
       env: TOXENV=py27
-    - python: 3.4
+    - python: 3.4.9
       env: TOXENV=py34
-    - python: 3.5
+    - python: 3.5.6
       env: TOXENV=py35
-    - python: 3.6
+    - python: 3.6.8
       env: TOXENV=py36
-    - python: 3.5
+    - python: 3.7.2
+      env: TOXENV=py37
+    - python: 3.2.2
       env: TOXENV=flake8
