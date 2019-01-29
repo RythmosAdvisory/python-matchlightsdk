@@ -23,7 +23,7 @@ source code, and PII records, and perform searches.
 Installation
 ------------
 
-Matchlight SDK is supported on Python 2.7, 3.3, 3.4, and 3.5. To install the
+Matchlight SDK is supported on Python 2.7, 3.4, 3.5, 3.6, and 3.7. To install the
 SDK, you'll need `pip <https://pip.pypa.io/en/stable/>`_::
 
     $ pip install matchlightsdk
