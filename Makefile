@@ -40,6 +40,7 @@ dev_requirements:
 test:
 	@make install_envs
 	@pyenv local ${PYENVS}
+	@make dev_requirements
 	@tox
 
 install_envs:
