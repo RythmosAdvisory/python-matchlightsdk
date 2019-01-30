@@ -272,8 +272,8 @@ class RecordMethods(object):
             data['phone_fingerprints'] = [phone_fingerprints]
 
         if credit_card is not None:
-            credit_card_fingerprints = fingerprints_pii_credit_card(credit_card)
-            data['credit_card_fingerprints'] = [credit_card_fingerprints]
+            cc_fingerprints = fingerprints_pii_credit_card(credit_card)
+            data['credit_card_fingerprints'] = [cc_fingerprints]
 
         if offline:
             return data
