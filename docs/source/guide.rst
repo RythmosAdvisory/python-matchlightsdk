@@ -123,10 +123,10 @@ use a consistent naming strategy on all your projects.
 
     code_project = ml.projects.add(
         name="Secret Security Algorithms",
-        type="sourcecode")
+        project_type="sourcecode")
     pii_project = ml.projects.add(
         name="Employee Information",
-        type="pii")
+        project_type="pii")
 
 
 Select an Existing Project
