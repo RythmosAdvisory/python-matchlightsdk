@@ -246,8 +246,7 @@ class RecordMethods(object):
             data['name_fingerprints'] = name_fingerprints
 
         if email:
-            email_fingerprints = [
-                fingerprints_pii_email_address(email)]
+            email_fingerprints = fingerprints_pii_email_address(email)
             data['email_fingerprints'] = email_fingerprints
         data['blinded_email'] = matchlight.utils.blind_email(email)
         data['name'] = matchlight.utils.blind_email(email)
