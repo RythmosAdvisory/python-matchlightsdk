@@ -225,51 +225,6 @@ def test_feed_download_failed(connection, feed, start_time, end_time):
 
 
 @pytest.mark.httpretty
-@mock.patch('io.open', create=True)
-def test_feed_download_output(mock_open, connection, feed, start_time,
-                              end_time, feed_download_url, feed_report_csv):
-    """Verifies feed download writing to a file."""
-    mock_open.return_value = mock.MagicMock(spec=io.IOBase)
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/prepare'.format(
-            matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        body=json.dumps({'feed_response_id': 1}),
-        content_type='application/json', status=200)
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/link'.format(
-            matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        responses=[
-            httpretty.Response(
-                body=json.dumps({'status': 'pending'}),
-                content_type='application/json',
-                status=200),
-            httpretty.Response(
-                body=json.dumps({
-                    'status': 'ready',
-                    'url': feed_download_url,
-                }),
-                content_type='application/json',
-                status=200),
-        ],
-    )
-
-    body = '\n'.join(feed_report_csv).encode('utf-8')
-    httpretty.register_uri(
-        httpretty.GET, feed_download_url,
-        content_type='text/csv',
-        body=body)
-    connection.feeds.download(
-        feed, start_time, end_time, save_path='/tmp/output')
-
-    file_handle = mock_open.return_value.__enter__.return_value
-    file_handle.write.assert_called_once_with(body)
-
-
-@pytest.mark.httpretty
 def test_feed_iteration(connection, feed):
     """Verifies feed iteration."""
     httpretty.register_uri(
