@@ -13,6 +13,7 @@ from pylibfp import (
     fingerprint,
     fingerprints_pii_address_variants,
     fingerprints_pii_city_state_zip_variants,
+    fingerprints_pii_credit_card,
     fingerprints_pii_email_address,
     fingerprints_pii_name_variants,
     fingerprints_pii_phone_number,
@@ -181,7 +182,7 @@ class RecordMethods(object):
     def add_pii(self, project, description, email, first_name=None,
                 middle_name=None, last_name=None, ssn=None, address=None,
                 city=None, state=None, zipcode=None, phone=None,
-                user_record_id='-', offline=False):
+                credit_card=None, user_record_id='-', offline=False):
         """Creates a new PII record in the given project.
 
         Args:
@@ -202,6 +203,7 @@ class RecordMethods(object):
             state (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             zipcode (int, optional): Defaults to :obj:`NoneType`.
             phone (:obj:`str`, optional): Defaults to :obj:`NoneType`.
+            credit_card (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             user_record_id (:obj:`str`, optional): An optional, user
                 provided custom record identifier. Defaults to
                 :obj:`NoneType`.
@@ -243,18 +245,17 @@ class RecordMethods(object):
                 first_name or '', middle_name or None, last_name or '')
             data['name_fingerprints'] = name_fingerprints
 
-        if email is not None:
-            email_fingerprints = [
-                fingerprints_pii_email_address(email)]
+        if email:
+            email_fingerprints = fingerprints_pii_email_address(email)
             data['email_fingerprints'] = email_fingerprints
         data['blinded_email'] = matchlight.utils.blind_email(email)
         data['name'] = matchlight.utils.blind_email(email)
 
-        if ssn is not None:
+        if ssn:
             ssn_fingerprints = [fingerprints_pii_ssn(ssn)]
             data['ssn_fingerprints'] = ssn_fingerprints
 
-        if address is not None:
+        if address:
             address_fingerprints = fingerprints_pii_address_variants(
                 address)
             data['street_address_fingerprints'] = address_fingerprints
@@ -265,9 +266,13 @@ class RecordMethods(object):
                   for text in (city, state, zipcode)])
             data['city_state_zip_fingerprints'] = csz_fingerprints
 
-        if phone is not None:
+        if phone:
             phone_fingerprints = fingerprints_pii_phone_number(phone)
             data['phone_fingerprints'] = [phone_fingerprints]
+
+        if credit_card:
+            cc_fingerprints = fingerprints_pii_credit_card(credit_card)
+            data['credit_card_fingerprints'] = [cc_fingerprints]
 
         if offline:
             return data
