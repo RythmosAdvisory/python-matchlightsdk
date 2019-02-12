@@ -1,20 +1,13 @@
 language: python
-before_script:
-  - pip install python-coveralls tox
+python:
+    - "2.7"
+    - "3.5"
+    - "3.6"
+    - "3.7"
 
-script: tox
-after_success:
-  - coveralls
+# command to install dependencies
+install: "pipenv sync -d"
 
-matrix:
-  include:
-    - python: 2.7
-      env: TOXENV=py27
-    - python: 3.4
-      env: TOXENV=py34
-    - python: 3.5
-      env: TOXENV=py35
-    - python: 3.6
-      env: TOXENV=py36
-    - python: 3.5
-      env: TOXENV=flake8
+# command to run tests
+script:
+    - pipenv run pytest

@@ -53,7 +53,7 @@ necessary, and ensure that your code passes all linters (see tox.ini).
 
 First, install all requirements::
 
-    $ make requirements
+    $ pipenv sync
 
 Then::
 
@@ -63,7 +63,7 @@ Then::
 
 To run tests, install test requirements::
 
-    $ make dev_requirements
+    $ pipenv install -d
 
 You will also need to install Pyenv https://github.com/pyenv/pyenv#installation
 The easiest way is with Homebrew::
@@ -74,7 +74,7 @@ NOTE: Make sure that pyenv is added to your path
 
 Then::
 
-    $ make test
+    $ pipenv run pytest
 
 **Update Requirements**
 

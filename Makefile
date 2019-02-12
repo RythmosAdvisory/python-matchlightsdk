@@ -27,23 +27,3 @@ docs:
 
 serve_docs:
 	tox -e docs,serve-docs
-
-.PHONY: requirements
-requirements:
-	@pip install -r $(REQUIREMENTS_DIR)/build.txt
-
-dev_requirements:
-	@pip install -r $(REQUIREMENTS_DIR)/build.txt
-	@pip install -r $(REQUIREMENTS_DIR)/dev.txt
-
-.PHONY: test
-test:
-	@make install_envs
-	@pyenv local ${PYENVS}
-	@tox
-
-install_envs:
-	@for v in ${PYENVS} ; do \
-		echo "Installing " $$v ; \
-		pyenv install -s $$v ; \
-	done
