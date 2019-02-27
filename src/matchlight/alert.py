@@ -97,7 +97,7 @@ class AlertMethods(object):
         self.conn = ml_connection
 
     def filter(self, limit, seen=None, archived=None, project=None,
-               record=None, last_modified=None, offset=None):
+               record=None, last_modified=None, last_alert=None):
         """Returns a list of alerts.
 
         Providing a **limit** keyword argument will limit the number of alerts
@@ -119,8 +119,8 @@ class AlertMethods(object):
         Providing an optional **last_modified** keyword argument will only
         return alerts with a last_modifed less than the argument.
 
-        Providing an optional **offset** keyword argument will skip this number
-        of alerts from being returned.
+        Providing an optional **last_alert** keyword argument will only return
+        results after this Alert
 
         Examples:
             Request all unseen alerts::
@@ -148,7 +148,7 @@ class AlertMethods(object):
                 id="625a732ad247beab18595z951c2088a3")>,
                 Alert(number="1026",
                 id="f9427dd5a24d4a98b2069004g04c2977")...
-                >>> ml.alerts.filter(limit=50, offset=50)
+                >>> ml.alerts.filter(limit=50, last_alert=50)
                 [<Alert(number="977",
                 id="59d5a791g8d4436aaffe64e4b15474a5")>,
                 Alert(number="976",
@@ -164,8 +164,8 @@ class AlertMethods(object):
             record (:class:`~.Record`, optional): a record object.
                 Defaults to all projects if not specified.
             last_modified (:obj:`datetime`, optional):
-            offset (:obj:`int`):
-                Skip this number of alerts.
+            last_alert (:obj:`int`):
+                Only return Alerts after this one.
 
         Returns:
             :obj:`list` of :class:`~.Alert`: List of alerts that
@@ -206,7 +206,7 @@ class AlertMethods(object):
                 'upload_token_filter': upload_token,
                 'record_id_filter': record_id,
                 'mtime': mtime,
-                'offset': offset
+                'last_alert': last_alert
             }
         )
         alerts = []
