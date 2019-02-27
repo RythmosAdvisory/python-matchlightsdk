@@ -73,6 +73,9 @@ _libfp.assets_from_phone_number.argtypes = [POINTER(c_char), POINTER(c_char),
     POINTER(c_char)]
 _libfp.assets_from_phone_number.restype = c_char_p
 
+_libfp.assets_from_credit_card.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
+_libfp.assets_from_credit_card.restype = c_char_p
+
 MODE_TEXT = 0
 MODE_CODE = 1
 MODE_DIGITS = 2
@@ -191,8 +194,9 @@ def fingerprints_pii_email_address(email):
     assets_json = _ensure_unicode(_libfp.assets_from_email_address(
             b"temporary", b"0", email))
     assets = json.loads(assets_json)
-    assert(len(assets) == 1)
-    return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
+    return [
+        [_ensure_unicode(fp) for fp in asset["fingerprints"]] for asset in assets
+    ]
 
 def fingerprints_pii_ssn(ssn):
     ssn = _ensure_bytes(ssn)
@@ -210,6 +214,9 @@ def fingerprints_pii_phone_number(phone_number):
     assert(len(assets) == 1)
     return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+def fingerprints_pii_credit_card(credit_card):
+    credit_card = _ensure_bytes(credit_card)
+    assets_json = _ensure_unicode(_libfp.assets_from_credit_card(b"temporary", b"0", credit_card))
+    assets = json.loads(assets_json)
+    assert(len(assets) == 1)
+    return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
