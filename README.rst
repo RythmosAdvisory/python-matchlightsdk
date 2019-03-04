@@ -32,7 +32,7 @@ Documentation
 -------------
 
 A walkthrough of the SDK features and API documentation is available at
-https://matchlight-sdk.readthedocs.io.
+https://python-matchlightsdk.readthedocs.io.
 
 License
 -------
