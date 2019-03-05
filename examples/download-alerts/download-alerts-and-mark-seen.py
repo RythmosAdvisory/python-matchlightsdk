@@ -6,39 +6,12 @@ filtering and pulling down Matchlight alerts data.
 import records
 from matchlight import Matchlight
 
-
-def setup_example_database(db):
-    # Create a new example database everytime with some fake data.
-    # Tip: In this example we just store the alert number for simplicity
-    # but in your application you should store all the alert object
-    # metadata.
-    # Reference: https://python-matchlightsdk.readthedocs.io/en/latest/api.html#alert
-    db.query('DROP TABLE IF EXISTS alerts')
-    db.query(
-        'CREATE TABLE alerts (id int PRIMARY KEY, number int)'
-    )
-    db.query(
-        'INSERT INTO alerts '
-        'VALUES      ("39de2145a1d66330b9d443a84c90d34f", 1)'
-    )
-    return db
-
-
-def get_last_alert(db):
-    return db.query(
-        'SELECT Max(alerts.number) AS max_alert_number FROM alerts'
-    )[0]
-
-
-def save_new_alert(db, new_alert):
-    db.query(
-        f'INSERT INTO alerts (id, number) '
-        f'VALUES     ("{new_alert.id}", "{new_alert.number}")'
-    )
-
-
-def get_number_of_local_alerts(db):
-    return db.query('SELECT Count(*) as count from alerts')[0].count
+from local_alert_utilities import (
+    get_last_saved_alert,
+    get_number_of_local_alerts,
+    save_new_alert,
+    setup_example_database,
+)
 
 
 def get_and_store_alerts():
@@ -47,17 +20,13 @@ def get_and_store_alerts():
     db = records.Database('sqlite:///:memory:')
     setup_example_database(db)
     print(
-        f'Number of alerts in databasse is {get_number_of_local_alerts(db)}'
+        f'Number of alerts in database is {get_number_of_local_alerts(db)}'
     )
 
     # Create a Matchliht API connection
     # Tip: You can generate your Matchlight API keys through the
     # Matchlight web interface
     # https://python-matchlightsdk.readthedocs.io/en/latest/guide.html?highlight=keys#authentication
-    # ml = Matchlight(
-    #     access_key='your-matchlight-api-access-key',
-    #     secret_key='your-matchlight-api-secret-key'
-    # )
     ml = Matchlight(
         access_key='your-matchlight-api-access-key',
         secret_key='your-matchlight-api-secret-key'
@@ -69,7 +38,7 @@ def get_and_store_alerts():
     # Uncomment to reset all you Matchlight data every time.
     # set_all_alerts_as_unseen(ml, project)
 
-    last_alert = get_last_alert(db)
+    last_alert = get_last_saved_alert(db)
     print(f'Latest alert is number {last_alert.max_alert_number}')
 
     keep_going = True
