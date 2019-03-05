@@ -212,7 +212,7 @@ class ProjectMethods(collections_abc.Iterable):
 
         Providing an optional **project_type** keyword argument will
         only return projects of the specified type: ``source_code``,
-        ``document``, ``pii``, or ``bulk_pii``.
+        ``document`` or ``pii``.
 
         Arguments:
             project_type (:obj:`str`, optional): The project type to
