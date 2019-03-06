@@ -23,12 +23,13 @@ def get_and_store_alerts():
     # Matchlight web interface
     # https://python-matchlightsdk.readthedocs.io/en/latest/guide.html?highlight=keys#authentication
     ml = Matchlight(
-        access_key='78f42f60b1d44dda97e2ca3ee4bf88bb',
-        secret_key='574fe283b64744bdb2331ac67fcfcbcc'
+        access_key='your-matchlight-api-access-key',
+        secret_key='your-matchlight-api-secret-key'
     )
 
-    # Grab a Matchlight project with multiple alerts.
-    project = ml.projects.get('b4c3253f-2c71-420e-a0ae-3f92daea697a')
+    # Tip: Make sure you have already created a project
+    # https://python-matchlightsdk.readthedocs.io/en/latest/guide.html#create-a-new-project
+    project = ml.projects.get('your-project-upload-token')
 
     # Find the last saved alert in our database. We will work backwards
     # through the new alerts until we get to this value.
