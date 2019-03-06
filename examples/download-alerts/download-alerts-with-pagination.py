@@ -41,7 +41,7 @@ def get_and_store_alerts():
     while keep_going:
         print(f'Last Alert Query Parameter is {last_alert_query_parameter}')
         alert_query = ml.alerts.filter(
-            project=project, limit=1, last_alert=last_alert_query_parameter
+            project=project, limit=2, last_alert=last_alert_query_parameter
         )
         if len(alert_query) == 0:
             print('No alerts left')
