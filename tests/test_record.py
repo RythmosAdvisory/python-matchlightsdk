@@ -8,6 +8,7 @@ import uuid
 
 import httpretty
 import pytest
+import responses
 
 import matchlight
 
@@ -126,6 +127,50 @@ def test_record_add_pii_missing_last_name_error(connection, project):
         'Fingerprinter Failed: the last_name argument is required along with '
         'the first_name argument.'
     )
+
+
+@responses.activate
+def test_record_add_document(min_score, connection, project, document):
+    """Verifies adding document records to a project."""
+    with io.open(DOCUMENT_RECORD_PATH, 'rb') as f:
+        content = f.readline()[0:840]
+
+    responses.add(
+        responses.POST,
+        '{}/records/upload/document/{}'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            project.upload_token
+        ),
+        json={
+            'id': uuid.uuid4().hex,
+            'name': 'name',
+            'description': '',
+            'ctime': time.time(),
+            'mtime': time.time(),
+            'metadata': '{}',
+        },
+        status=200
+    )
+
+    record = connection.records.add_document(
+        project=project,
+        name=document['name'],
+        description=document['description'],
+        content=content,
+        user_record_id='12345',
+        min_score=min_score)
+    httpretty.reset()
+
+    record = connection.records.add_document(
+        project=project,
+        name=document['name'],
+        description=document['description'],
+        content=content,
+        user_record_id=12345,
+        min_score=min_score,
+        offline=True)
+    assert isinstance(record, dict)
+    assert not httpretty.has_request()
 
 
 @pytest.mark.httpretty
