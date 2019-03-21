@@ -148,3 +148,30 @@ def alert_details_pii_payload():
 def alert(alert_payload):
     """An alert instance fixture."""
     return matchlight.Alert.from_mapping(alert_payload)
+
+
+@pytest.fixture(scope='function')
+def pii_search_email_only_results():
+    """PII search results for only the email field."""
+    return [
+        {
+            'fields': ['email'],
+            'ts': '2018-07-25T20:00:44',
+            'source': 'Exactis Breach June 2018'
+        },
+        {
+            'fields': ['email'],
+            'ts': '2017-01-25T02:35:04',
+            'source': 'https://pastebin.com/raw.php?i=1DgbtSZc'
+        },
+        {
+            'fields': ['email'],
+            'ts': '2017-02-08T07:59:39',
+            'source': 'Zoosk Breach Nov 2016'
+        },
+        {
+            'fields': ['email'],
+            'ts': '2016-11-24T00:18:27',
+            'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
+        },
+    ]

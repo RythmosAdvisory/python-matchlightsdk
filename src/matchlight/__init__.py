@@ -92,3 +92,4 @@ class Matchlight(object):
         self.feeds = FeedMethods(self.conn)
         self.records = RecordMethods(self.conn)
         self.search = SearchMethods(self.conn).search
+        self.pii_search = SearchMethods(self.conn).pii_search
