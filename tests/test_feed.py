@@ -7,9 +7,9 @@ import random
 import time
 import uuid
 
-import httpretty
 import mock
 import pytest
+import responses
 import six.moves
 
 import matchlight
@@ -104,63 +104,71 @@ def test_feed_timestamps(feed):
     assert datetime.datetime.fromtimestamp(feed.stop_timestamp) == feed.end
 
 
-@pytest.mark.httpretty
+@responses.activate
 def test_feed_counts(connection, feed, start_time, end_time):
     """Verifies requesting feed counts."""
-    expected = {
+    expected_response = {
         int(time.time()): random.randint(0, 1000),
         int(time.time()): random.randint(0, 1000),
         int(time.time()): random.randint(0, 1000),
         int(time.time()): random.randint(0, 1000),
     }
-    httpretty.register_uri(
-        httpretty.POST, '{}/feeds/{}'.format(
-            matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        body=json.dumps(expected),
-        content_type='application/json', status=200)
+    responses.add(
+        method=responses.POST,
+        url='{}/feeds/{}'.format(matchlight.MATCHLIGHT_API_URL_V2, feed.name),
+        json=expected_response,
+        status=200
+    )
     result = connection.feeds.counts(feed, start_time, end_time)
-    assert result == connection.feeds._format_count(expected)
+    assert len(responses.calls) == 1
+    assert result == connection.feeds._format_count(expected_response)
 
     result = connection.feeds.counts(feed.name, start_time, end_time)
-    assert result == connection.feeds._format_count(expected)
+    assert len(responses.calls) == 2
+    assert result == connection.feeds._format_count(expected_response)
 
 
-@pytest.mark.httpretty
+@responses.activate
 def test_feed_download(connection, feed, start_time, end_time,
                        feed_download_url, feed_report_csv):
     """Verifies feed downloads."""
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/prepare'.format(
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/prepare'.format(
             matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        body=json.dumps({'feed_response_id': 1}),
-        content_type='application/json', status=200)
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/link'.format(
-            matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        responses=[
-            httpretty.Response(
-                body=json.dumps({'status': 'pending'}),
-                content_type='application/json',
-                status=200),
-            httpretty.Response(
-                body=json.dumps({
-                    'status': 'ready',
-                    'url': feed_download_url,
-                }),
-                content_type='application/json',
-                status=200),
-        ],
+            feed.name
+        ),
+        json={'feed_response_id': 1},
+        status=200
     )
-    httpretty.register_uri(
-        httpretty.GET, feed_download_url,
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/link'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            feed.name
+        ),
+        json={'status': 'pending'},
+        status=200
+    )
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/link'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            feed.name
+        ),
+        json={'status': 'ready', 'url': feed_download_url},
+        status=200
+    )
+    responses.add(
+        method=responses.GET,
+        url=feed_download_url,
         content_type='text/csv',
-        body='\n'.join(feed_report_csv))
+        body='\n'.join(feed_report_csv),
+        status=200
+    )
+
     rows = connection.feeds.download(feed, start_time, end_time)
+    assert len(responses.calls) == 4
     feed_rows = [
         connection.feeds._format_feed(row)
         for row in csv.DictReader(feed_report_csv)
@@ -168,6 +176,7 @@ def test_feed_download(connection, feed, start_time, end_time,
     assert rows == feed_rows
 
     rows = connection.feeds.download(feed.name, start_time, end_time)
+    assert len(responses.calls) == 7
     feed_rows = [
         connection.feeds._format_feed(row)
         for row in csv.DictReader(feed_report_csv)
@@ -175,122 +184,138 @@ def test_feed_download(connection, feed, start_time, end_time,
     assert rows == feed_rows
 
 
-@pytest.mark.httpretty
+@responses.activate
 def test_feed_download_failed(connection, feed, start_time, end_time):
     """Verifies that feed download failures throw an SDK exception."""
     prepare_url = '{}/feed/{}/prepare'.format(
         matchlight.MATCHLIGHT_API_URL_V2,
-        feed.name)
-    httpretty.register_uri(
-        httpretty.POST, prepare_url,
-        body=json.dumps({'feed_response_id': 1}),
-        content_type='application/json', status=200)
+        feed.name
+    )
+    responses.add(
+        method=responses.POST,
+        url=prepare_url,
+        json={'feed_response_id': 1},
+        status=200
+    )
 
     link_url = '{}/feed/{}/link'.format(
         matchlight.MATCHLIGHT_API_URL_V2,
-        feed.name)
-    httpretty.register_uri(
-        httpretty.POST, link_url,
-        responses=[
-            httpretty.Response(
-                body=json.dumps({'status': 'pending'}),
-                content_type='application/json',
-                status=200),
-            httpretty.Response(
-                body=json.dumps({'status': 'failed', 'message': ''}),
-                content_type='application/json',
-                status=200),
-        ],
+        feed.name
+    )
+    responses.add(
+        method=responses.POST,
+        url=link_url,
+        json={'status': 'pending'},
+        status=200
+    )
+    responses.add(
+        method=responses.POST,
+        url=link_url,
+        json={'status': 'failed', 'message': ''},
+        status=200
+    )
+
+    with pytest.raises(matchlight.error.SDKError):
+        connection.feeds.download(feed, start_time, end_time)
+    assert len(responses.calls) == 3
+
+    responses.add(
+        method=responses.POST,
+        url=prepare_url,
+        json='{}',
+        status=400
     )
     with pytest.raises(matchlight.error.SDKError):
         connection.feeds.download(feed, start_time, end_time)
+    assert len(responses.calls) == 5
 
-    httpretty.register_uri(
-        httpretty.POST, prepare_url, body='{}',
-        content_type='application/json', status=400)
+    responses.add(
+        method=responses.POST,
+        url=link_url,
+        json={'status': 'potato'},
+        status=200
+    ),
     with pytest.raises(matchlight.error.SDKError):
         connection.feeds.download(feed, start_time, end_time)
-
-    httpretty.register_uri(
-        httpretty.POST, link_url,
-        responses=[
-            httpretty.Response(
-                body=json.dumps({'status': 'potato'}),
-                content_type='application/json',
-                status=200),
-        ],
-    )
-    with pytest.raises(matchlight.error.SDKError):
-        connection.feeds.download(feed, start_time, end_time)
+    assert len(responses.calls) == 6
 
 
-@pytest.mark.httpretty
+@responses.activate
 @mock.patch('io.open', create=True)
 def test_feed_download_output(mock_open, connection, feed, start_time,
                               end_time, feed_download_url, feed_report_csv):
     """Verifies feed download writing to a file."""
     mock_open.return_value = mock.MagicMock(spec=io.IOBase)
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/prepare'.format(
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/prepare'.format(
             matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        body=json.dumps({'feed_response_id': 1}),
-        content_type='application/json', status=200)
-    httpretty.register_uri(
-        httpretty.POST,
-        '{}/feed/{}/link'.format(
+            feed.name
+        ),
+        json={'feed_response_id': 1},
+        status=200
+    )
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/link'.format(
             matchlight.MATCHLIGHT_API_URL_V2,
-            feed.name),
-        responses=[
-            httpretty.Response(
-                body=json.dumps({'status': 'pending'}),
-                content_type='application/json',
-                status=200),
-            httpretty.Response(
-                body=json.dumps({
-                    'status': 'ready',
-                    'url': feed_download_url,
-                }),
-                content_type='application/json',
-                status=200),
-        ],
+            feed.name
+        ),
+        json={'status': 'pending'},
+        status=200
+    )
+    responses.add(
+        method=responses.POST,
+        url='{}/feed/{}/link'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            feed.name
+        ),
+        json={'status': 'ready', 'url': feed_download_url},
+        status=200
     )
 
     body = '\n'.join(feed_report_csv).encode('utf-8')
-    httpretty.register_uri(
-        httpretty.GET, feed_download_url,
+    responses.add(
+        method=responses.GET,
+        url=feed_download_url,
         content_type='text/csv',
-        body=body)
+        body=body,
+        status=200
+    )
+
     connection.feeds.download(
         feed, start_time, end_time, save_path='/tmp/output')
-
+    assert len(responses.calls) == 4
     file_handle = mock_open.return_value.__enter__.return_value
     file_handle.write.assert_called_once_with(body)
 
 
-@pytest.mark.httpretty
+@responses.activate
 def test_feed_iteration(connection, feed):
     """Verifies feed iteration."""
-    httpretty.register_uri(
-        httpretty.GET, '{}/feeds'.format(matchlight.MATCHLIGHT_API_URL_V2),
-        body=json.dumps({'feeds': [feed.details]}),
-        content_type='application/json', status=200,
+    responses.add(
+        method=responses.GET,
+        url='{}/feeds'.format(matchlight.MATCHLIGHT_API_URL_V2),
+        json={'feeds': [feed.details]},
+        status=200,
     )
     feeds_iterable = iter(connection.feeds)
     assert next(feeds_iterable).details == feed.details
     with pytest.raises(StopIteration):
         next(feeds_iterable)
+    assert len(responses.calls) == 1
 
 
-@pytest.mark.httpretty
+@responses.activate
 def test_feed_list(connection, feed):
     """Verifies feed listing."""
-    httpretty.register_uri(
-        httpretty.GET, '{}/feeds'.format(matchlight.MATCHLIGHT_API_URL_V2),
-        body=json.dumps({'feeds': [feed.details]}),
-        content_type='application/json', status=200,
+    responses.add(
+        method=responses.GET,
+        url='{}/feeds'.format(matchlight.MATCHLIGHT_API_URL_V2),
+        json={'feeds': [feed.details]},
+        status=200,
     )
     feeds = connection.feeds.all()
     assert len(feeds) == 1
     assert feeds[0].details == feed.details
+    assert len(responses.calls) == 1

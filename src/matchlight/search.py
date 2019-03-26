@@ -101,3 +101,56 @@ class SearchMethods(object):
                     'ts': datetime.datetime.fromtimestamp(url[0]),
                     'url': url[1]
                 }
+
+    def pii_search(self, email=None, limit=50):
+        """Performs a Matchlight search specifically for PII.
+
+        Provides a retrospective search capability designed specifically for
+        finding compromised PII data.
+        Search results are sorted & show which fields matched on each hit.
+        Only exact matches are returned.
+
+        Example:
+
+            >>> ml.pii_search(email="familybird@terbiumlabs.com")
+
+        Args:
+            email (:obj:`str`, required): A valid email address.
+            limit (:obj:`int`, optional): The number of Alerts to return,
+                defaults to 50.
+
+        Returns:
+            :obj:`list` of :obj:`dict`: Each search result returns a
+                source, ts, fields
+
+        """
+        if not any(email):
+            raise matchlight.error.SDKError(
+                'Input Error: At least one field is required.'
+            )
+
+        request_data = {}
+
+        if email:
+            request_data['email_fingerprints'] = (
+                pylibfp.fingerprints_pii_email_address(str(email))
+            )
+
+        if limit:
+            request_data['limit'] = limit
+
+        response = self.conn.request(
+            '/pii_search',
+            data=json.dumps(request_data),
+            endpoint=self.conn.search_endpoint,
+        )
+        try:
+            results = response.json()['results']
+        except KeyError:
+            raise matchlight.error.SDKError('Failed to get search results')
+        for result in results:
+            result['ts'] = datetime.datetime.strptime(
+                result['ts'],
+                '%Y-%m-%dT%H:%M:%S'
+            )
+            yield result

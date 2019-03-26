@@ -6,8 +6,8 @@ import json
 import time
 import uuid
 
-import httpretty
 import pytest
+import responses
 
 import matchlight
 
@@ -128,28 +128,34 @@ def test_record_add_pii_missing_last_name_error(connection, project):
     )
 
 
-@pytest.mark.httpretty
+@responses.activate
 @pytest.mark.parametrize('min_score', [
     None,
     800,
 ])
-def test_record_add_document(min_score, connection, project, document):
+def test_record_add_document_prototype(
+        min_score, connection, project, document):
     """Verifies adding document records to a project."""
     with io.open(DOCUMENT_RECORD_PATH, 'rb') as f:
         content = f.readline()[0:840]
 
-    httpretty.register_uri(
-        httpretty.POST, '{}/records/upload/document/{}'.format(
-            matchlight.MATCHLIGHT_API_URL_V2, project.upload_token),
-        body=json.dumps({
+    responses.add(
+        method=responses.POST,
+        url='{}/records/upload/document/{}'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            project.upload_token
+        ),
+        json={
             'id': uuid.uuid4().hex,
             'name': 'name',
             'description': '',
             'ctime': time.time(),
             'mtime': time.time(),
             'metadata': '{}',
-        }),
-        content_type='application/json', status=200)
+        },
+        status=200
+    )
+
     record = connection.records.add_document(
         project=project,
         name=document['name'],
@@ -157,7 +163,7 @@ def test_record_add_document(min_score, connection, project, document):
         content=content,
         user_record_id='12345',
         min_score=min_score)
-    httpretty.reset()
+    assert len(responses.calls) == 1
 
     record = connection.records.add_document(
         project=project,
@@ -168,10 +174,58 @@ def test_record_add_document(min_score, connection, project, document):
         min_score=min_score,
         offline=True)
     assert isinstance(record, dict)
-    assert not httpretty.has_request()
+    assert len(responses.calls) == 1
 
 
-@pytest.mark.httpretty
+@responses.activate
+@pytest.mark.parametrize('min_score', [
+    None,
+    800,
+])
+def test_record_add_document(min_score, connection, project, document):
+    """Verifies adding document records to a project."""
+    with io.open(DOCUMENT_RECORD_PATH, 'rb') as f:
+        content = f.readline()[0:840]
+
+    responses.add(
+        method=responses.POST,
+        url='{}/records/upload/document/{}'.format(
+            matchlight.MATCHLIGHT_API_URL_V2,
+            project.upload_token
+        ),
+        json={
+            'id': uuid.uuid4().hex,
+            'name': 'name',
+            'description': '',
+            'ctime': time.time(),
+            'mtime': time.time(),
+            'metadata': '{}',
+        },
+        status=200
+    )
+
+    record = connection.records.add_document(
+        project=project,
+        name=document['name'],
+        description=document['description'],
+        content=content,
+        user_record_id='12345',
+        min_score=min_score)
+    assert len(responses.calls) == 1
+
+    record = connection.records.add_document(
+        project=project,
+        name=document['name'],
+        description=document['description'],
+        content=content,
+        user_record_id=12345,
+        min_score=min_score,
+        offline=True)
+    assert isinstance(record, dict)
+    assert len(responses.calls) == 1
+
+
+@responses.activate
 def test_record_add_pii(connection, project, pii_records_raw):
     """Verifies adding PII records to a project."""
     record_data = [
@@ -184,37 +238,38 @@ def test_record_add_pii(connection, project, pii_records_raw):
         }
         for record in pii_records_raw
     ]
-    httpretty.register_uri(
-        httpretty.POST, '{}/records/upload/pii/{}'.format(
-            matchlight.MATCHLIGHT_API_URL_V2, project.upload_token),
-        responses=[
-            httpretty.Response(
-                body=json.dumps({
-                    'id': payload['id'],
-                    'name': payload['name'],
-                    'description': payload['description'],
-                    'ctime': payload['ctime'],
-                    'mtime': payload['mtime'],
-                    'metadata': '{}',
-                }),
-                content_type='application/json',
-                status=200)
-            for payload in record_data
-        ])
-    for i, pii_record in enumerate(pii_records_raw):
+
+    for payload in record_data:
+        responses.add(
+            method=responses.POST,
+            url='{}/records/upload/pii/{}'.format(
+                matchlight.MATCHLIGHT_API_URL_V2,
+                project.upload_token
+            ),
+            json={
+                'id': payload['id'],
+                'name': payload['name'],
+                'description': payload['description'],
+                'ctime': payload['ctime'],
+                'mtime': payload['mtime'],
+                'metadata': '{}',
+            },
+            status=200
+        )
+
+    for counter, pii_record in enumerate(pii_records_raw):
         record = connection.records.add_pii(
             project=project,
             description='',
             **pii_record)
-        assert record.id == record_data[i]['id']
+        assert record.id == record_data[counter]['id']
+        assert len(responses.calls) == counter + 1
 
-    httpretty.reset()
-
-    for i, pii_record in enumerate(pii_records_raw):
+    for counter, pii_record in enumerate(pii_records_raw):
         record = connection.records.add_pii(
             project=project,
             description='',
             offline=True,
             **pii_record)
         assert isinstance(record, dict)
-        assert not httpretty.has_request()
+        assert len(responses.calls) == 4
