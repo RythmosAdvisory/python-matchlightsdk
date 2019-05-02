@@ -184,9 +184,9 @@ def test_record_add_document_prototype(
             project=project,
             name=document['name'],
             description=document['description'],
-            content=''.join(
-                random.choices(string.ascii_uppercase + string.digits, k=841)
-            ),
+            content=''.join(random.choice(
+                string.ascii_uppercase + string.digits
+            ) for _ in range(860)),
         )
 
     assert str(err_info.value) == (
