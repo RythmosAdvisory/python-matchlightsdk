@@ -29,6 +29,9 @@ __all__ = (
 )
 
 
+MAX_DOCUMENT_FINGERPRINTS = 840
+
+
 class Record(object):
     """Represents a personal information record."""
 
@@ -137,7 +140,35 @@ class RecordMethods(object):
 
     def add_document(self, project, name, description, content,
                      user_record_id='-', min_score=None, offline=False):
-        """Creates a new document record in the given project."""
+        """Creates a new document record in the given project.
+
+        Args:
+            project (:class:`~.Project`): Project object to associate
+                with record.
+            name (:obj:`str`): The name of the document (not
+                fingerprinted).
+            description (:obj:`str`): A description of the record (not
+                fingerprinted).
+            content (:obj:`str`): The text of the document to be
+                fingerprinted. Must be 840 characters or less.
+            user_record_id (:obj:`str`, optional): An optional, user
+                provided custom record identifier. Defaults to
+                :obj:`NoneType`.
+            offline (:obj:`bool`, optional): Run in "offline mode". No
+                data is sent to the Matchlight server. Returns a
+                dictionary of values instead of a :class:`~.Report`
+                instance.
+
+        Returns:
+            :class:`~.Record`: Created record with metadata.
+
+        """
+        if len(content) > MAX_DOCUMENT_FINGERPRINTS:
+            raise matchlight.error.SDKError(
+                'Fingerprinter Failed: the maximum length of a Document record'
+                ' is 840 characters.'
+            )
+
         result_json = fingerprint(content, flags=OPTIONS_TILED)
         result = json.loads(result_json)
         fingerprints = result['data']['fingerprints']
@@ -301,9 +332,37 @@ class RecordMethods(object):
 
     def add_source_code(self, project, name, description, code_path,
                         min_score=None, offline=False):
-        """Creates a new source code record in the given project."""
+        """Creates a new source code record in the given project.
+
+        Args:
+            project (:class:`~.Project`): Project object to associate
+                with record.
+            name (:obj:`str`): The name of the file (not
+                fingerprinted).
+            description (:obj:`str`): A description of the code (not
+                fingerprinted).
+            code_path (:obj:`str`): The location of the source code.
+                Code must be 840 characters or less.
+            user_record_id (:obj:`str`, optional): An optional, user
+                provided custom record identifier. Defaults to
+                :obj:`NoneType`.
+            offline (:obj:`bool`, optional): Run in "offline mode". No
+                data is sent to the Matchlight server. Returns a
+                dictionary of values instead of a :class:`~.Report`
+                instance.
+
+        Returns:
+            :class:`~.Record`: Created record with metadata.
+
+        """
         with io.open(code_path, 'r', encoding='utf-8') as document:
             content = document.read()
+
+        if len(content) > MAX_DOCUMENT_FINGERPRINTS:
+            raise matchlight.error.SDKError(
+                'Fingerprinter Failed: the maximum length of a Source Code '
+                'record is 840 characters.'
+            )
 
         result_json = fingerprint(content, flags=OPTIONS_TILED, mode=MODE_CODE)
         result = json.loads(result_json)

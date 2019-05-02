@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 import io
 import json
+import random
+import string
 import time
 import uuid
 
@@ -175,6 +177,22 @@ def test_record_add_document_prototype(
         offline=True)
     assert isinstance(record, dict)
     assert len(responses.calls) == 1
+
+    # Test that a nice error is returned for too long input
+    with pytest.raises(matchlight.error.SDKError) as err_info:
+        connection.records.add_document(
+            project=project,
+            name=document['name'],
+            description=document['description'],
+            content=''.join(random.choice(
+                string.ascii_uppercase + string.digits
+            ) for _ in range(860)),
+        )
+
+    assert str(err_info.value) == (
+        'Fingerprinter Failed: the maximum length of a Document record'
+        ' is 840 characters.'
+    )
 
 
 @responses.activate
