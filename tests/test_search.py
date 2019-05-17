@@ -77,3 +77,36 @@ def test_pii_search_limit(connection, pii_search_email_only_results):
         'email_fingerprints': [['ff71225ace46c2b0'], ['293de73a18a5e063']],
         'limit': 2,
     }
+
+
+@responses.activate
+def test_search_email(connection, search_email_only_results):
+    """Verifies generic search when using email."""
+    responses.add(
+        method=responses.POST,
+        url='{}/detailed_search'.format(matchlight.MATCHLIGHT_API_URL_V2),
+        json={'results': search_email_only_results},
+        status=200
+    )
+
+    print(list(connection.search(email='familybird@terbiumlabs.com')))
+
+    assert list(
+        connection.search(email='familybird@terbiumlabs.com')
+    ) == [
+        {
+            'score': 800,
+            'ts': datetime.datetime(2016, 1, 20, 8, 58, 13),
+            'url': (
+                'http://blockchainbdgpzk.onion/tx/4f4097992b89156'
+                '690817556fc3f540535bdfadde06661c9cae21d500943f970'
+            )
+        }, {
+            'score': 800,
+            'ts': datetime.datetime(2015, 8, 6, 10, 21, 57),
+            'url': (
+                'http://nqigfqrxnkwcqmiq.onion/'
+                'wiki/index.php#Whistleblowing'
+            )
+        }
+    ]

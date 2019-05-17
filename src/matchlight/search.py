@@ -80,11 +80,15 @@ class SearchMethods(object):
             result = json.loads(result_json)
             fingerprints = result['data']['fingerprints']
 
-        if any(isinstance(element, list) for element in fingerprints):
-            raise matchlight.error.SDKError(
-                'Fingerprinter Failed: List of Lists')
+        # We have to convert possible lists of lists to a flat list of strings
+        def flatten_iter(x):
+            if not isinstance(x, list):
+                yield(x)
+            else:
+                for i in x:
+                    yield from flatten_iter(i)
 
-        data = {'fingerprints': list(fingerprints)}
+        data = {'fingerprints': list(flatten_iter(fingerprints))}
         response = self.conn.request(
             '/detailed_search',
             data=json.dumps(data),

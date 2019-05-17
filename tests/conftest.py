@@ -175,3 +175,38 @@ def pii_search_email_only_results():
             'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
         },
     ]
+
+
+@pytest.fixture(scope='function')
+def search_email_only_results():
+    """PII search results for only the email field."""
+    return [
+        {
+            'cwid': 'fff33cbe7ed54f5ebfccd09c3d24999c',
+            'score': 800,
+            'ts': 1453298293,
+            'urls': [
+                [
+                    1453298293,
+                    (
+                        'http://blockchainbdgpzk.onion/tx/4f4097992b89156'
+                        '690817556fc3f540535bdfadde06661c9cae21d500943f970'
+                    )
+                ]
+            ]
+        },
+        {
+            'cwid': 'ffedf0a2b775cfd50383603ff827d702',
+            'score': 800,
+            'ts': 1438870917,
+            'urls': [
+                [
+                    1438870917,
+                    (
+                        'http://nqigfqrxnkwcqmiq.onion/'
+                        'wiki/index.php#Whistleblowing'
+                    )
+                ]
+            ]
+        },
+    ]
