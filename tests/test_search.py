@@ -89,8 +89,6 @@ def test_search_email(connection, search_email_only_results):
         status=200
     )
 
-    print(list(connection.search(email='familybird@terbiumlabs.com')))
-
     assert list(
         connection.search(email='familybird@terbiumlabs.com')
     ) == [
