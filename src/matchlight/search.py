@@ -4,6 +4,8 @@ from __future__ import absolute_import
 import datetime
 import json
 
+import six
+
 import matchlight.error
 import pylibfp
 
@@ -156,7 +158,7 @@ class SearchMethods(object):
             raise matchlight.error.SDKError('Failed to get search results')
         for result in results:
             # This result can seemingly be in different formats.
-            if isinstance(result['ts'], (str, unicode)):
+            if isinstance(result['ts'], six.text_type):
                 result['ts'] = datetime.datetime.strptime(
                     result['ts'],
                     '%Y-%m-%dT%H:%M:%S'
