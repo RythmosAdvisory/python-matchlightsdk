@@ -155,11 +155,15 @@ class SearchMethods(object):
         except KeyError:
             raise matchlight.error.SDKError('Failed to get search results')
         for result in results:
-            # This result can seemingly be in two different formats.
-            result['ts'] = datetime.datetime.strptime(
-                result['ts'],
-                '%Y-%m-%dT%H:%M:%S'
-            ) if isinstance(result['ts'], str) else (
-                datetime.datetime.fromtimestamp(float(result['ts']))
-            )
+            # This result can seemingly be in different formats.
+            if isinstance(result['ts'], str):
+                result['ts'] = datetime.datetime.strptime(
+                    result['ts'],
+                    '%Y-%m-%dT%H:%M:%S'
+                )
+            elif isinstance(result['ts'], int):
+                result['ts'] = datetime.datetime.fromtimestamp(
+                    float(result['ts'])
+                )
+
             yield result
