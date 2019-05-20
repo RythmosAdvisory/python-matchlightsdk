@@ -32,12 +32,12 @@ def test_pii_search(connection, pii_search_email_only_results):
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2017, 2, 8, 7, 59, 39),
+            'ts': datetime.datetime(2019, 4, 25, 15, 52, 50),
             'source': 'Zoosk Breach Nov 2016'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2016, 11, 24, 0, 18, 27),
+            'ts': datetime.datetime(2019, 5, 20, 2, 20, 5),
             'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
         }
     ]
