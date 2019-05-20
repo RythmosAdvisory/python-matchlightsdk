@@ -22,12 +22,18 @@ def test_pii_search(connection, pii_search_email_only_results):
     ) == [
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1532563244),
+            'ts': datetime.datetime.strptime(
+                '2018-07-25T20:00:44',
+                '%Y-%m-%dT%H:%M:%S'
+            ),
             'source': 'Exactis Breach June 2018'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1485329704),
+            'ts': datetime.datetime.strptime(
+                '2017-01-25T02:35:04',
+                '%Y-%m-%dT%H:%M:%S'
+            ),
             'source': 'https://pastebin.com/raw.php?i=1DgbtSZc'
         },
         {
@@ -63,12 +69,18 @@ def test_pii_search_limit(connection, pii_search_email_only_results):
     ) == [
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1532563244),
+            'ts': datetime.datetime.strptime(
+                '2018-07-25T20:00:44',
+                '%Y-%m-%dT%H:%M:%S'
+            ),
             'source': 'Exactis Breach June 2018'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1485329704),
+            'ts': datetime.datetime.strptime(
+                '2017-01-25T02:35:04',
+                '%Y-%m-%dT%H:%M:%S'
+            ),
             'source': 'https://pastebin.com/raw.php?i=1DgbtSZc'
         }
     ]
@@ -94,14 +106,14 @@ def test_search_email(connection, search_email_only_results):
     ) == [
         {
             'score': 800,
-            'ts': datetime.datetime(2016, 1, 20, 8, 58, 13),
+            'ts': datetime.datetime.fromtimestamp(1453298293),
             'url': (
                 'http://blockchainbdgpzk.onion/tx/4f4097992b89156'
                 '690817556fc3f540535bdfadde06661c9cae21d500943f970'
             )
         }, {
             'score': 800,
-            'ts': datetime.datetime(2015, 8, 6, 10, 21, 57),
+            'ts': datetime.datetime.fromtimestamp(1438870917),
             'url': (
                 'http://nqigfqrxnkwcqmiq.onion/'
                 'wiki/index.php#Whistleblowing'
