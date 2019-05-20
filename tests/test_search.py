@@ -22,22 +22,22 @@ def test_pii_search(connection, pii_search_email_only_results):
     ) == [
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2018, 7, 25, 20, 0, 44),
+            'ts': datetime.datetime.fromtimestamp(1532563244),
             'source': 'Exactis Breach June 2018'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2017, 1, 25, 2, 35, 4),
+            'ts': datetime.datetime.fromtimestamp(1485329704),
             'source': 'https://pastebin.com/raw.php?i=1DgbtSZc'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2019, 4, 25, 15, 52, 50),
+            'ts': datetime.datetime.fromtimestamp(1556221970),
             'source': 'Zoosk Breach Nov 2016'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2019, 5, 20, 2, 20, 5),
+            'ts': datetime.datetime.fromtimestamp(1558333205),
             'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
         }
     ]
@@ -63,12 +63,12 @@ def test_pii_search_limit(connection, pii_search_email_only_results):
     ) == [
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2018, 7, 25, 20, 0, 44),
+            'ts': datetime.datetime.fromtimestamp(1532563244),
             'source': 'Exactis Breach June 2018'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime(2017, 1, 25, 2, 35, 4),
+            'ts': datetime.datetime.fromtimestamp(1485329704),
             'source': 'https://pastebin.com/raw.php?i=1DgbtSZc'
         }
     ]
