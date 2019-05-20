@@ -86,7 +86,9 @@ class SearchMethods(object):
                 yield(x)
             else:
                 for i in x:
-                    yield from flatten_iter(i)
+                    # same as yield from flatten_iter(i)
+                    for j in flatten_iter(i):
+                        yield j
 
         data = {'fingerprints': list(flatten_iter(fingerprints))}
         response = self.conn.request(
