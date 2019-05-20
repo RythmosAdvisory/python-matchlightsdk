@@ -38,12 +38,12 @@ def test_pii_search(connection, pii_search_email_only_results):
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1556221970),
+            'ts': datetime.datetime.fromtimestamp(1556221970.0),
             'source': 'Zoosk Breach Nov 2016'
         },
         {
             'fields': ['email'],
-            'ts': datetime.datetime.fromtimestamp(1558333205),
+            'ts': datetime.datetime.fromtimestamp(1558333205.0),
             'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
         }
     ]
@@ -106,14 +106,14 @@ def test_search_email(connection, search_email_only_results):
     ) == [
         {
             'score': 800,
-            'ts': datetime.datetime.fromtimestamp(1453298293),
+            'ts': datetime.datetime.fromtimestamp(1453298293.0),
             'url': (
                 'http://blockchainbdgpzk.onion/tx/4f4097992b89156'
                 '690817556fc3f540535bdfadde06661c9cae21d500943f970'
             )
         }, {
             'score': 800,
-            'ts': datetime.datetime.fromtimestamp(1438870917),
+            'ts': datetime.datetime.fromtimestamp(1438870917.0),
             'url': (
                 'http://nqigfqrxnkwcqmiq.onion/'
                 'wiki/index.php#Whistleblowing'

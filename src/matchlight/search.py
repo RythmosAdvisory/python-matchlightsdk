@@ -104,7 +104,7 @@ class SearchMethods(object):
             for url in result['urls']:
                 yield {
                     'score': result['score'],
-                    'ts': datetime.datetime.fromtimestamp(url[0]),
+                    'ts': datetime.datetime.fromtimestamp(float(url[0])),
                     'url': url[1]
                 }
 
@@ -160,6 +160,6 @@ class SearchMethods(object):
                 result['ts'],
                 '%Y-%m-%dT%H:%M:%S'
             ) if isinstance(result['ts'], str) else (
-                datetime.datetime.fromtimestamp(result['ts'])
+                datetime.datetime.fromtimestamp(float(result['ts']))
             )
             yield result
