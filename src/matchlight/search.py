@@ -156,7 +156,7 @@ class SearchMethods(object):
             raise matchlight.error.SDKError('Failed to get search results')
         for result in results:
             # This result can seemingly be in different formats.
-            if isinstance(result['ts'], str):
+            if isinstance(result['ts'], (str, unicode)):
                 result['ts'] = datetime.datetime.strptime(
                     result['ts'],
                     '%Y-%m-%dT%H:%M:%S'
