@@ -96,7 +96,10 @@ def _ensure_bytes(v):
     if _ISPY3 and hasattr(v, "encode"):
         return v.encode("utf-8")
     if _ISPY2 and type(v) is not str:
-        return v.encode("utf-8")
+        try:
+            return v.encode("utf-8")
+        except AttributeError:
+            return v
     else:
         return v
 
@@ -183,6 +186,10 @@ def fingerprints_pii_city_state_zip_variants(city, state, zipcode):
     city = _ensure_bytes(city)
     state = _ensure_bytes(state)
     zipcode = _ensure_bytes(zipcode)
+
+    # MdY: This is required to make state optional, not sure why.
+    state = b'' if state is None else state
+
     assets_json = _ensure_unicode(_libfp.assets_from_city_state_zip(
             b"temporary", b"0", city, state, zipcode))
     assets = json.loads(assets_json)
