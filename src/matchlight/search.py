@@ -4,6 +4,8 @@ from __future__ import absolute_import
 import datetime
 import json
 
+import six
+
 import matchlight.error
 import pylibfp
 
@@ -80,11 +82,17 @@ class SearchMethods(object):
             result = json.loads(result_json)
             fingerprints = result['data']['fingerprints']
 
-        if any(isinstance(element, list) for element in fingerprints):
-            raise matchlight.error.SDKError(
-                'Fingerprinter Failed: List of Lists')
+        # We have to convert possible lists of lists to a flat list of strings
+        def flatten_iter(x):
+            if not isinstance(x, list):
+                yield(x)
+            else:
+                for i in x:
+                    # same as yield from flatten_iter(i)
+                    for j in flatten_iter(i):
+                        yield j
 
-        data = {'fingerprints': list(fingerprints)}
+        data = {'fingerprints': list(flatten_iter(fingerprints))}
         response = self.conn.request(
             '/detailed_search',
             data=json.dumps(data),
@@ -98,7 +106,7 @@ class SearchMethods(object):
             for url in result['urls']:
                 yield {
                     'score': result['score'],
-                    'ts': datetime.datetime.fromtimestamp(url[0]),
+                    'ts': datetime.datetime.fromtimestamp(float(url[0])),
                     'url': url[1]
                 }
 
@@ -149,8 +157,15 @@ class SearchMethods(object):
         except KeyError:
             raise matchlight.error.SDKError('Failed to get search results')
         for result in results:
-            result['ts'] = datetime.datetime.strptime(
-                result['ts'],
-                '%Y-%m-%dT%H:%M:%S'
-            )
+            # This result can seemingly be in different formats.
+            if isinstance(result['ts'], six.text_type):
+                result['ts'] = datetime.datetime.strptime(
+                    result['ts'],
+                    '%Y-%m-%dT%H:%M:%S'
+                )
+            elif isinstance(result['ts'], int):
+                result['ts'] = datetime.datetime.fromtimestamp(
+                    float(result['ts'])
+                )
+
             yield result
