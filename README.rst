@@ -67,6 +67,7 @@ To run tests, install test requirements::
 
 You will also need to install Pyenv https://github.com/pyenv/pyenv#installation
 The easiest way is with Homebrew::
+
     $ brew update
     $ brew install pyenv
 
