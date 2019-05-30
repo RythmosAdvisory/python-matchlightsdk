@@ -171,7 +171,7 @@ def pii_search_email_only_results():
         },
         {
             'fields': ['email'],
-            'ts': 1558333205,
+            'ts': '1558333205',
             'source': 'https://www.reddit.com/r/AskReddit/comments/3oqj4a'
         },
     ]
