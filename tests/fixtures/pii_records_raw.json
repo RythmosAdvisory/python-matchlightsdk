@@ -25,5 +25,12 @@
     "middle_name": "",
     "last_name": "Daniels",
     "credit_card": "4111-1111-1111-1111"
+  },
+  {
+    "email": "rdan@yblabs.com",
+    "first_name": "Rodger",
+    "middle_name": "",
+    "last_name": "Daniels",
+    "iban": "DE89 3704 0044 0532 0130 00"
   }
 ]

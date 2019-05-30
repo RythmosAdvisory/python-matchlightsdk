@@ -76,6 +76,9 @@ _libfp.assets_from_phone_number.restype = c_char_p
 _libfp.assets_from_credit_card.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
 _libfp.assets_from_credit_card.restype = c_char_p
 
+_libfp.assets_from_iban.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
+_libfp.assets_from_iban.restype = c_char_p
+
 MODE_TEXT = 0
 MODE_CODE = 1
 MODE_DIGITS = 2
@@ -227,3 +230,11 @@ def fingerprints_pii_credit_card(credit_card):
     assets = json.loads(assets_json)
     assert(len(assets) == 1)
     return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
+
+def fingerprints_pii_iban(iban):
+    iban = _ensure_bytes(iban)
+    assets_json = _ensure_unicode(_libfp.assets_from_iban(b"temporary", b"0", iban))
+    assets = json.loads(assets_json)
+
+    return [[_ensure_unicode(fp) for fp in asset["fingerprints"]]
+            for asset in assets]
