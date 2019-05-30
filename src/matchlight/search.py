@@ -158,6 +158,10 @@ class SearchMethods(object):
             raise matchlight.error.SDKError('Failed to get search results')
         for result in results:
             # This result can seemingly be in different formats.
+            try:
+                result['ts'] = int(result['ts'])
+            except ValueError:
+                pass
             if isinstance(result['ts'], six.text_type):
                 result['ts'] = datetime.datetime.strptime(
                     result['ts'],
