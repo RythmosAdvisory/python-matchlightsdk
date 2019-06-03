@@ -202,7 +202,7 @@ def search_email_only_results():
         },
         {
             'cwid': 'ffedf0a2b775cfd50383603ff827d702',
-            'score': 800,
+            'score': 400,
             'ts': 1438870917,
             'urls': [
                 [
