@@ -107,7 +107,9 @@ class SearchMethods(object):
                 yield {
                     # PII Alerts are always 800, Search results on PII filds
                     # should be as well.
-                    'score': result['score'] if query else 800,
+                    'score': 800 if any(
+                        [email, ssn, phone]
+                    ) else result['score'],
                     'ts': datetime.datetime.fromtimestamp(float(url[0])),
                     'url': url[1]
                 }
