@@ -15,23 +15,41 @@ __all__ = (
 
 
 class Alert(object):
-    """Represents an alert."""
+    """Represents an alert.
+
+    Attributes:
+        id (:obj:`str`): A 128-bit UUID.
+        number (:obj:`int`): The account specific alert number.
+        type (:obj:`str`): (:obj:`str`): The type of the associated record.
+        url (:obj:`str`): The url where the match was found.
+        url_metadata (:obj:`dict`): additional information about the url.
+        ctime (:obj:`int`, optional): A Unix timestamp of the alert creation
+            timestamp.
+        mtime (:obj:`int`, optional): A Unix timestamp of the alert last
+            modification date timestamp.
+        seen (:obj:`bool`): User specific flag.
+        archived (:obj:`bool`): User specific flag.
+        upload_token (:obj:`str`): The upload_token of the associated record.
+
+    """
 
     def __init__(self, id, number, type, url, url_metadata, ctime, mtime, seen,
-                 archived, upload_token):
+                 archived, upload_token, _details):
         """Initializes a new alert.
 
         Args:
             id (:obj:`str`): A 128-bit UUID.
             number (:obj:`int`): The account specific alert number.
             url (:obj:`str`): The url where the match was found.
-            score (:obj:`int`): The matchlight score (1-800).
             ctime (:obj:`int`, optional): A Unix timestamp of the
                 alert creation timestamp.
             mtime (:obj:`int`, optional): A Unix timestamp of the
                 alert last modification date timestamp.
             seen (:obj:`bool`): User specific flag.
             archived (:obj:`bool`): User specific flag.
+            upload_token (:obj:`str`): The upload_token of the associated
+                record.
+            _details (:obj:`dict`): details about the Alert.
 
         """
         self.id = id
@@ -59,6 +77,7 @@ class Alert(object):
             seen=True if mapping['seen'] == 'true' else False,
             archived=True if mapping['archived'] == 'true' else False,
             upload_token=mapping['upload_token'],
+            _details=mapping['details'],
         )
 
     @property
@@ -74,6 +93,29 @@ class Alert(object):
         if self.ctime is None:
             return None
         return datetime.datetime.fromtimestamp(self.ctime)
+
+    @property
+    def score(self):
+        """:obj:`int`: Represents how much of the record appeared on the page.
+
+        Scores range from 1 to 800, with 800 representing that the entire
+        record was found on the page. PII records will always have a score
+        of 800.
+        """
+        if self.type == 'pii':
+            return 800
+        if self.type == 'document':
+            return self._details['document'].get('score', None)
+        if self.type == 'source_code':
+            return self._details['source_code'].get('score', None)
+
+    @property
+    def fields(self):
+        """:obj:`list`: PII records will match on one or more 'fields'."""
+        if self.type == 'pii':
+            return self._details['pii'].get('fields', [])
+
+        return None
 
     def __repr__(self):  # pragma: no cover
         return '<Alert(number="{}", id="{}")>'.format(

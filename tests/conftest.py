@@ -121,7 +121,12 @@ def alert_payload(id, upload_token):
         'mtime': time.time(),
         'seen': 'true',
         'archived': 'true',
-        'upload_token': upload_token
+        'upload_token': upload_token,
+        'details': {
+            'pii': {
+                'fields': ['phone']
+            }
+        },
     }
 
 
