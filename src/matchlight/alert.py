@@ -20,7 +20,7 @@ class Alert(object):
     Attributes:
         id (:obj:`str`): A 128-bit UUID.
         number (:obj:`int`): The account specific alert number.
-        type (:obj:`str`): (:obj:`str`): The type of the associated record.
+        type (:obj:`str`): (:obj:`str`): The type of the associated Record.
         url (:obj:`str`): The url where the match was found.
         url_metadata (:obj:`dict`): additional information about the url.
         ctime (:obj:`int`, optional): A Unix timestamp of the alert creation
@@ -29,12 +29,15 @@ class Alert(object):
             modification date timestamp.
         seen (:obj:`bool`): User specific flag.
         archived (:obj:`bool`): User specific flag.
-        upload_token (:obj:`str`): The upload_token of the associated record.
+        upload_token (:obj:`str`): The upload_token of the associated Project.
+        details (:obj:`dict`): Additional information about the Alert.
+        project_name (:obj:`str`): The name of the associated Project
+        record_name (:obj:`str`): The name of the associated Record.
 
     """
 
     def __init__(self, id, number, type, url, url_metadata, ctime, mtime, seen,
-                 archived, upload_token, _details):
+                 archived, upload_token, details, project_name, record_name):
         """Initializes a new alert.
 
         Args:
@@ -49,7 +52,9 @@ class Alert(object):
             archived (:obj:`bool`): User specific flag.
             upload_token (:obj:`str`): The upload_token of the associated
                 record.
-            _details (:obj:`dict`): details about the Alert.
+            details (:obj:`dict`): details about the Alert.
+            project_name (:obj:`str`): The name of the associated Project
+            record_name (:obj:`str`): The name of the associated Record.
 
         """
         self.id = id
@@ -62,6 +67,9 @@ class Alert(object):
         self.seen = seen
         self.archived = archived
         self.upload_token = upload_token
+        self.details = details
+        self.project_name = project_name
+        self.record_name = record_name
 
     @classmethod
     def from_mapping(cls, mapping):
@@ -77,7 +85,9 @@ class Alert(object):
             seen=True if mapping['seen'] == 'true' else False,
             archived=True if mapping['archived'] == 'true' else False,
             upload_token=mapping['upload_token'],
-            _details=mapping['details'],
+            details=mapping['details'],
+            project_name=mapping['project_name'],
+            record_name=mapping['asset_name']
         )
 
     @property
@@ -105,15 +115,15 @@ class Alert(object):
         if self.type == 'pii':
             return 800
         if self.type == 'document':
-            return self._details['document'].get('score', None)
+            return self.details['document'].get('score', None)
         if self.type == 'source_code':
-            return self._details['source_code'].get('score', None)
+            return self.details['source_code'].get('score', None)
 
     @property
     def fields(self):
         """:obj:`list`: PII records will match on one or more 'fields'."""
         if self.type == 'pii':
-            return self._details['pii'].get('fields', [])
+            return self.details['pii'].get('fields', [])
 
         return None
 

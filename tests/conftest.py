@@ -127,6 +127,8 @@ def alert_payload(id, upload_token):
                 'fields': ['phone']
             }
         },
+        'asset_name': 'Example Record',
+        'project_name': 'Sample Project',
     }
 
 
