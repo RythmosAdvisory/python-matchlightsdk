@@ -20,12 +20,12 @@ class Alert(object):
     Attributes:
         id (:obj:`str`): A 128-bit UUID.
         number (:obj:`int`): The account specific alert number.
-        type (:obj:`str`): (:obj:`str`): The type of the associated Record.
+        type (:obj:`str`): The type of the associated Record.
         url (:obj:`str`): The url where the match was found.
         url_metadata (:obj:`dict`): additional information about the url.
-        ctime (:obj:`int`, optional): A Unix timestamp of the alert creation
+        ctime (:obj:`int`): A Unix timestamp of the alert creation
             timestamp.
-        mtime (:obj:`int`, optional): A Unix timestamp of the alert last
+        mtime (:obj:`int`): A Unix timestamp of the alert last
             modification date timestamp.
         seen (:obj:`bool`): User specific flag.
         archived (:obj:`bool`): User specific flag.
@@ -43,10 +43,11 @@ class Alert(object):
         Args:
             id (:obj:`str`): A 128-bit UUID.
             number (:obj:`int`): The account specific alert number.
+            type (:obj:`str`): The type of the associated Record.
             url (:obj:`str`): The url where the match was found.
-            ctime (:obj:`int`, optional): A Unix timestamp of the
+            ctime (:obj:`int`): A Unix timestamp of the
                 alert creation timestamp.
-            mtime (:obj:`int`, optional): A Unix timestamp of the
+            mtime (:obj:`int`): A Unix timestamp of the
                 alert last modification date timestamp.
             seen (:obj:`bool`): User specific flag.
             archived (:obj:`bool`): User specific flag.
