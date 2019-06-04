@@ -55,8 +55,8 @@ class SearchMethods(object):
             email (:obj:`str`, optional): A valid email address.
             ssn (:obj:`str`, optional): A social security number.
             phone (:obj:`str`, optional): A phone number.
-            fingerprints (:obj:`list` of :obj:`str`, optional): A
-                sequence of Matchlight fingerprints.
+            fingerprints (:obj:`list` of :obj:`str`, optional): A sequence of
+            Matchlight fingerprints, these will be searched as if one query.
 
 
         Returns:
@@ -105,7 +105,11 @@ class SearchMethods(object):
         for result in results:
             for url in result['urls']:
                 yield {
-                    'score': result['score'],
+                    # PII Alerts are always 800, Search results on PII filds
+                    # should be as well.
+                    'score': 800 if any(
+                        [email, ssn, phone]
+                    ) else result['score'],
                     'ts': datetime.datetime.fromtimestamp(float(url[0])),
                     'url': url[1]
                 }

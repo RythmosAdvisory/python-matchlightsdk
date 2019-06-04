@@ -121,7 +121,14 @@ def alert_payload(id, upload_token):
         'mtime': time.time(),
         'seen': 'true',
         'archived': 'true',
-        'upload_token': upload_token
+        'upload_token': upload_token,
+        'details': {
+            'pii': {
+                'fields': ['phone']
+            }
+        },
+        'asset_name': 'Example Record',
+        'project_name': 'Sample Project',
     }
 
 
@@ -197,7 +204,7 @@ def search_email_only_results():
         },
         {
             'cwid': 'ffedf0a2b775cfd50383603ff827d702',
-            'score': 800,
+            'score': 400,
             'ts': 1438870917,
             'urls': [
                 [
