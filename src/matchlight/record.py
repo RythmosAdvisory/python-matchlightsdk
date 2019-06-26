@@ -16,7 +16,9 @@ from pylibfp import (
     fingerprints_pii_credit_card,
     fingerprints_pii_email_address,
     fingerprints_pii_iban,
+    fingerprints_pii_medicare_id,
     fingerprints_pii_name_variants,
+    fingerprints_pii_passport,
     fingerprints_pii_phone_number,
     fingerprints_pii_ssn,
     MODE_CODE,
@@ -214,8 +216,8 @@ class RecordMethods(object):
     def add_pii(self, project, description, email, first_name=None,
                 middle_name=None, last_name=None, ssn=None, address=None,
                 city=None, state=None, zipcode=None, phone=None,
-                credit_card=None, iban=None, user_record_id='-',
-                offline=False):
+                credit_card=None, medicare_id=None, passport=None, iban=None,
+                user_record_id='-', offline=False):
         """Creates a new PII record in the given project.
 
         Args:
@@ -237,6 +239,8 @@ class RecordMethods(object):
             zipcode (int, optional): Defaults to :obj:`NoneType`.
             phone (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             credit_card (:obj:`str`, optional): Defaults to :obj:`NoneType`.
+            medicare_id (:obj:`str`, optional): Defaults to :obj:`NoneType`.
+            passport (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             iban (:obj:`str`, optional): Defaults to :obj:`NoneType`.
             user_record_id (:obj:`str`, optional): An optional, user
                 provided custom record identifier. Defaults to
@@ -307,6 +311,16 @@ class RecordMethods(object):
         if credit_card:
             cc_fingerprints = fingerprints_pii_credit_card(credit_card)
             data['credit_card_fingerprints'] = [cc_fingerprints]
+
+        if medicare_id:
+            medicare_id_fingerprints = fingerprints_pii_medicare_id(
+                medicare_id
+            )
+            data['medicare_id_fingerprints'] = [medicare_id_fingerprints]
+
+        if passport:
+            passport_fingerprints = fingerprints_pii_passport(passport)
+            data['passport_fingerprints'] = [passport_fingerprints]
 
         if iban:
             iban_fingerprints = fingerprints_pii_iban(iban)
