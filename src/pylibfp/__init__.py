@@ -76,6 +76,12 @@ _libfp.assets_from_phone_number.restype = c_char_p
 _libfp.assets_from_credit_card.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
 _libfp.assets_from_credit_card.restype = c_char_p
 
+_libfp.assets_from_medicare_id.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
+_libfp.assets_from_medicare_id.restype = c_char_p
+
+_libfp.assets_from_passport.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
+_libfp.assets_from_passport.restype = c_char_p
+
 _libfp.assets_from_iban.argtypes = [POINTER(c_char), POINTER(c_char), POINTER(c_char)]
 _libfp.assets_from_iban.restype = c_char_p
 
@@ -227,6 +233,20 @@ def fingerprints_pii_phone_number(phone_number):
 def fingerprints_pii_credit_card(credit_card):
     credit_card = _ensure_bytes(credit_card)
     assets_json = _ensure_unicode(_libfp.assets_from_credit_card(b"temporary", b"0", credit_card))
+    assets = json.loads(assets_json)
+    assert(len(assets) == 1)
+    return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
+
+def fingerprints_pii_medicare_id(medicare_id):
+    medicare_id = _ensure_bytes(medicare_id)
+    assets_json = _ensure_unicode(_libfp.assets_from_medicare_id(b"temporary", b"0", medicare_id))
+    assets = json.loads(assets_json)
+    assert(len(assets) == 1)
+    return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
+
+def fingerprints_pii_passport(passport):
+    passport = _ensure_bytes(passport)
+    assets_json = _ensure_unicode(_libfp.assets_from_passport(b"temporary", b"0", passport))
     assets = json.loads(assets_json)
     assert(len(assets) == 1)
     return [_ensure_unicode(fp) for fp in assets[0]["fingerprints"]]
