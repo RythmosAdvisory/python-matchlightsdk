@@ -290,4 +290,4 @@ def test_record_add_pii(connection, project, pii_records_raw):
             offline=True,
             **pii_record)
         assert isinstance(record, dict)
-        assert len(responses.calls) == 5
+        assert len(responses.calls) == 6

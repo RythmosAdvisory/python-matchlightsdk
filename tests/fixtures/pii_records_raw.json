@@ -32,5 +32,13 @@
     "middle_name": "",
     "last_name": "Daniels",
     "iban": "DE89 3704 0044 0532 0130 00"
+  },
+  {
+    "email": "bird@feathers.com",
+    "first_name": "Rodger",
+    "middle_name": "",
+    "last_name": "Daniels",
+    "medicare_id": "1EG4-TE5-MK72",
+    "passport": "C01X0006H"
   }
 ]
